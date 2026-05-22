@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOOP — Community-Powered Mobility | Anne Wambaire Mwangi</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0d1117;
+  --bg-card: #161b22;
+  --bg-card-alt: #1c2333;
+  --bg-elevated: #21283b;
+  --loop-green: #2ee882;
+  --loop-green-dim: rgba(46, 232, 130, 0.12);
+  --loop-green-glow: rgba(46, 232, 130, 0.25);
+  --accent-coral: #ff6b6b;
+  --accent-amber: #f0b429;
+  --accent-blue: #4da6ff;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-tertiary: #484f58;
+  --border: rgba(46, 232, 130, 0.08);
+  --border-active: rgba(46, 232, 130, 0.3);
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Libre Baskerville', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--loop-green); color: var(--bg-deep); }
+
+/* --- NOISE OVERLAY --- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* --- GLOW ORB --- */
+.glow-orb {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(46,232,130,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  top: -200px;
+  right: -200px;
+  animation: orbFloat 20s ease-in-out infinite;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-80px, 120px); }
+  50% { transform: translate(40px, 200px); }
+  75% { transform: translate(-60px, 80px); }
+}
+
+/* --- NAV --- */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(13, 17, 23, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--loop-green);
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+.nav-logo span { color: var(--text-secondary); font-weight: 400; font-size: 0.85rem; margin-left: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--loop-green); }
+
+/* --- HERO --- */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 4rem 6rem;
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.hero-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--loop-green);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease 0.2s forwards;
+}
+.hero-badge::before {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: var(--loop-green);
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease 0.4s forwards;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--loop-green);
+  position: relative;
+}
+.hero h1 em::after {
+  content: '';
+  position: absolute;
+  bottom: 0.05em;
+  left: 0;
+  right: 0;
+  height: 0.08em;
+  background: var(--loop-green);
+  opacity: 0.3;
+  border-radius: 2px;
+}
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 620px;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease 0.6s forwards;
+}
+.hero-meta {
+  display: flex;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease 0.8s forwards;
+}
+.hero-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.hero-meta-item .label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-tertiary);
+}
+.hero-meta-item .value {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- SECTION FRAMEWORK --- */
+.section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 6rem 4rem;
+  position: relative;
+}
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--loop-green);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--loop-green);
+}
+.section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  line-height: 1.15;
+}
+.section-intro {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin-bottom: 3.5rem;
+  line-height: 1.8;
+}
+
+/* --- DIVIDER --- */
+.divider {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  height: 1px;
+  position: relative;
+}
+.divider::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-active), transparent);
+}
+
+/* --- PROBLEM SECTION --- */
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.problem-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+.problem-card:hover {
+  border-color: var(--border-active);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--loop-green), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.problem-card:hover::before { opacity: 1; }
+.problem-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--loop-green-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1.25rem;
+}
+.problem-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+.problem-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* --- STAT BANNER --- */
+.stat-banner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+.stat-item {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center bottom, var(--loop-green-dim), transparent 70%);
+  pointer-events: none;
+}
+.stat-number {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  color: var(--loop-green);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.stat-label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+/* --- BUSINESS MODEL --- */
+.bm-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+.bm-flow {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  position: relative;
+}
+.bm-flow h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+}
+.flow-step {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.flow-step:last-child { margin-bottom: 0; }
+.flow-num {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: var(--loop-green-dim);
+  border: 1.5px solid var(--loop-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--loop-green);
+}
+.flow-step:not(:last-child) .flow-num::after {
+  content: '';
+  position: absolute;
+  top: 44px;
+  left: 19px;
+  width: 1px;
+  height: calc(100% - 24px);
+  background: linear-gradient(to bottom, var(--loop-green), transparent);
+  opacity: 0.3;
+}
+.flow-content h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.flow-content p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.bm-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.bm-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+}
+.bm-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* --- FARE BREAKDOWN VISUAL --- */
+.fare-visual {
+  background: var(--bg-card-alt);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.fare-bar {
+  display: flex;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.fare-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--bg-deep);
+}
+.fare-segment.driver { background: var(--loop-green); flex: 0.72; }
+.fare-segment.platform { background: var(--accent-amber); flex: 0.15; }
+.fare-segment.insurance { background: var(--accent-blue); flex: 0.13; }
+.fare-legend {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.fare-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.fare-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* --- COST COMPARISON TABLE --- */
+.cost-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+}
+.cost-table thead th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border-active);
+}
+.cost-table tbody td {
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.cost-table tbody tr:last-child td { border-bottom: none; }
+.cost-table tbody tr:last-child {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.cost-table tbody tr:last-child td { color: var(--text-primary); border-top: 2px solid var(--border-active); }
+.cost-highlight {
+  color: var(--loop-green) !important;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+.cost-dim {
+  color: var(--accent-coral) !important;
+  font-family: var(--font-mono);
+}
+
+/* --- IMPACT SECTION --- */
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+.impact-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.25rem;
+  transition: all 0.4s ease;
+}
+.impact-card:hover {
+  border-color: var(--border-active);
+  transform: translateY(-2px);
+}
+.impact-card .tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+.impact-card .tag.economic { background: rgba(240,180,41,0.12); color: var(--accent-amber); }
+.impact-card .tag.social { background: rgba(46,232,130,0.12); color: var(--loop-green); }
+.impact-card .tag.environmental { background: rgba(77,166,255,0.12); color: var(--accent-blue); }
+.impact-card .tag.equity { background: rgba(255,107,107,0.12); color: var(--accent-coral); }
+.impact-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+.impact-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* --- APP SHOWCASE --- */
+.showcase-scroll {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 1rem 0 2rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.showcase-scroll::-webkit-scrollbar { height: 4px; }
+.showcase-scroll::-webkit-scrollbar-track { background: var(--bg-card); border-radius: 2px; }
+.showcase-scroll::-webkit-scrollbar-thumb { background: var(--loop-green); border-radius: 2px; }
+.screen-card {
+  min-width: 280px;
+  max-width: 300px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+.screen-card img {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.screen-card img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+}
+.screen-card .caption {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-top: 0.75rem;
+  padding-left: 0.25rem;
+}
+.screen-card .caption strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* --- ROADMAP --- */
+.roadmap-track {
+  position: relative;
+  padding-left: 3rem;
+}
+.roadmap-track::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--loop-green), var(--accent-blue), var(--accent-amber));
+  border-radius: 1px;
+}
+.roadmap-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+  padding: 1.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: border-color 0.3s;
+}
+.roadmap-item:hover { border-color: var(--border-active); }
+.roadmap-item::before {
+  content: '';
+  position: absolute;
+  left: -2.35rem;
+  top: 2rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--loop-green);
+  border: 3px solid var(--bg-deep);
+  box-shadow: 0 0 0 2px var(--loop-green);
+}
+.roadmap-item .phase-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--loop-green);
+  margin-bottom: 0.5rem;
+}
+.roadmap-item h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.roadmap-item p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* --- TECH STACK --- */
+.tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.tech-pill {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: all 0.3s;
+}
+.tech-pill:hover {
+  border-color: var(--loop-green);
+  color: var(--loop-green);
+  background: var(--loop-green-dim);
+}
+
+/* --- REFERENCES --- */
+.ref-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ref-list li {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  line-height: 1.6;
+}
+.ref-list li a {
+  color: var(--accent-blue);
+  text-decoration: none;
+  word-break: break-all;
+}
+.ref-list li a:hover { text-decoration: underline; }
+
+/* --- FOOTER --- */
+.footer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  color: var(--loop-green);
+  margin-bottom: 0.5rem;
+}
+.footer p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+.footer .credits {
+  margin-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.05em;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .hero { padding: 7rem 2rem 4rem; }
+  .section { padding: 4rem 2rem; }
+  .stat-banner { grid-template-columns: repeat(2, 1fr); padding: 3rem 2rem; }
+  .bm-layout { grid-template-columns: 1fr; }
+  .impact-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .divider { padding: 0 2rem; }
+  .footer { padding: 3rem 2rem; }
+}
+@media (max-width: 600px) {
+  .hero h1 { font-size: 2.5rem; }
+  .stat-banner { grid-template-columns: 1fr 1fr; }
+  .hero-meta { gap: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="glow-orb"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav-logo">Loop<span>Portfolio Case Study</span></a>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#who">Who It's For</a>
+    <a href="#model">Business Model</a>
+    <a href="#costs">Cost Analysis</a>
+    <a href="#impact">Impact</a>
+    <a href="#app">The App</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-badge">RBC Hackathon 2025 — Halifax, Nova Scotia</div>
+  <h1>Your community<br>commute, <em>connected</em></h1>
+  <p class="hero-sub">
+    LOOP is a community-powered shared-ride platform tackling transportation poverty in Halifax. 
+    Built during a hackathon, it connects riders who need affordable, reliable transportation with 
+    drivers already making similar journeys — turning empty car seats into pathways to opportunity.
+  </p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="label">Team</span>
+      <span class="value">Alex Barr · Jenille Cheney · Gregory Drew · Curtis Ferguson · Anne Wambaire Mwangi</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Role</span>
+      <span class="value">Data & Business Analyst</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Stack</span>
+      <span class="value">React · GTFS-RT · Google Maps API</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Focus</span>
+      <span class="value">Business Model · Impact Analysis</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Region</span>
+      <span class="value">Halifax Regional Municipality</span>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="section-label">01 — The Problem</div>
+  <h2>The Urban Disconnect</h2>
+  <p class="section-intro">
+    In Halifax, rapid population growth has outpaced transportation infrastructure. The result is a mobility crisis 
+    that hits hardest in low-income communities — where unreliable transit, long commutes, and the prohibitive cost 
+    of car ownership create an invisible barrier to economic opportunity.
+  </p>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="problem-icon">🚗</div>
+      <h3>Car Dependency Trap</h3>
+      <p>75–81.5% of Halifax commuters drive to work. Traffic congestion increased 30% above free-flow in 2024, with 28 severely congested days between August and October — up from just 6 in 2019.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">⏱️</div>
+      <h3>The "Time Tax"</h3>
+      <p>Transit commuters face an average 44-minute commute versus 25 minutes by car. This time penalty falls disproportionately on low-income residents who depend on public transit for essential travel.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🗺️</div>
+      <h3>Transit Deserts</h3>
+      <p>Spryfield, Dartmouth North, and Preston face significant service gaps. Suspended express routes (41, 78, 179) have stranded communities that were already underserved — creating "dynamic transit deserts."</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">💰</div>
+      <h3>Affordability Crisis</h3>
+      <p>Car ownership costs exceed $5,270/year before financing. For households below $49,000 income, that consumes over 10% of gross income — forcing an impossible choice between money and time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STAT BANNER -->
+<div class="stat-banner">
+  <div class="stat-item">
+    <div class="stat-number">503K</div>
+    <div class="stat-label">HRM Population (2024)</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">13.3%</div>
+    <div class="stat-label">Poverty Rate</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">25.6 min</div>
+    <div class="stat-label">Avg. Commute Time</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">30%</div>
+    <div class="stat-label">Congestion Level</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- WHO IS LOOP FOR -->
+<section class="section" id="who">
+  <div class="section-label">Who Is LOOP For?</div>
+  <h2>Built for Real Routines, Real People</h2>
+  <p class="section-intro">
+    LOOP isn't for everyone — it's for people whose lives run on routines. Same workplace, same school drop-off, 
+    same clinic appointment every Tuesday. If you're already making that trip, LOOP turns your empty seats into community impact.
+  </p>
+  <div class="problem-grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
+    <div class="problem-card">
+      <div class="problem-icon">🌿</div>
+      <h3>The Eco-Conscious Commuter</h3>
+      <p>You care about the environment and want to reduce your carbon footprint — but you also want to offset some of the costs of driving. LOOP lets you do both: fewer single-occupancy trips on Halifax roads, and money back in your pocket from sharing a ride you're already taking.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🔁</div>
+      <h3>The Routine Rider</h3>
+      <p>You go to the same place at the same time, every day — work, school, clinic. LOOP is built for recurring commutes, not spontaneous trips. Set your route once, get matched with drivers on the same schedule, and turn an unpredictable commute into something you can count on.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🤝</div>
+      <h3>The Community Builder</h3>
+      <p>You're tired of commuting alone. LOOP transforms the daily grind into an opportunity to meet neighbours, share conversations, and build friendships. Profiles, bios, and shared rides turn strangers into familiar faces — your commute becomes your community.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BUSINESS MODEL -->
+<section class="section" id="model">
+  <div class="section-label">02 — Business Model</div>
+  <h2>How LOOP Creates Value</h2>
+  <p class="section-intro">
+    LOOP operates as a social enterprise with a transparent platform-fee model. Every transaction fuels 
+    a virtuous cycle: riders get affordable rides, drivers offset costs, and the platform sustains itself 
+    to serve the community.
+  </p>
+  <div class="bm-layout">
+    <div class="bm-flow">
+      <h3>The LOOP Transaction Flow</h3>
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <h4>Rider Tops Up Wallet</h4>
+          <p>Flexible top-up model (no rigid subscriptions). Maria adds $15–$20 when she can — providing financial dignity and budgeting control for variable-income households.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <h4>Ride is Matched & Completed</h4>
+          <p>The matching algorithm pairs riders with drivers on similar routes. A fixed, transparent fare of ~$3.50 per trip is deducted from the rider's wallet upon completion.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <h4>Revenue is Distributed</h4>
+          <p>LOOP retains a 15% platform fee ($0.52). The remaining 85% ($2.98) goes directly to the driver — offsetting their existing commute costs for fuel, insurance, and maintenance.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-content">
+          <h4>Platform Reinvests</h4>
+          <p>Platform fees fund server infrastructure, API licensing, safety systems, community growth, and feature development — creating a self-sustaining ecosystem.</p>
+        </div>
+      </div>
+    </div>
+    <div class="bm-breakdown">
+      <div class="bm-card">
+        <h3>💵 Fare Distribution per Trip</h3>
+        <div class="fare-visual">
+          <div class="fare-bar">
+            <div class="fare-segment driver">$2.98</div>
+            <div class="fare-segment platform">$0.52</div>
+          </div>
+          <div class="fare-legend">
+            <div class="fare-legend-item"><div class="fare-dot" style="background:var(--loop-green)"></div> Driver Payout (85%)</div>
+            <div class="fare-legend-item"><div class="fare-dot" style="background:var(--accent-amber)"></div> Platform Fee (15%)</div>
+          </div>
+        </div>
+        <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7">The $3.50 fare keeps rides affordable for low-income riders while providing meaningful cost-offset for drivers. This balance is the engine of LOOP's community-powered model.</p>
+      </div>
+      <div class="bm-card">
+        <h3>🏗️ Three Revenue Pillars</h3>
+        <div style="display:flex;flex-direction:column;gap:1rem;margin-top:0.5rem">
+          <div>
+            <div style="font-family:var(--font-display);font-weight:600;font-size:0.92rem;color:var(--text-primary);margin-bottom:0.2rem">Transaction Fees</div>
+            <div style="font-size:0.85rem;color:var(--text-secondary)">15% per completed ride — the core, scalable revenue stream that grows with every new rider-driver pair.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-weight:600;font-size:0.92rem;color:var(--text-primary);margin-bottom:0.2rem">Employer Partnerships</div>
+            <div style="font-size:0.85rem;color:var(--text-secondary)">Subsidized commute programs for businesses in Burnside, Bayers Lake, and downtown BIDs — expanding the EPass/UPass model to corporate partners.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-weight:600;font-size:0.92rem;color:var(--text-primary);margin-bottom:0.2rem">Municipal Subsidies</div>
+            <div style="font-size:0.85rem;color:var(--text-secondary)">First-mile/last-mile subsidy contracts: the municipality pays LOOP to connect transit desert residents to high-frequency transit hubs, at a fraction of new bus-route costs.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COST COMPARISON -->
+<section class="section" id="costs">
+  <div class="section-label">03 — Cost Analysis</div>
+  <h2>The Affordability Equation</h2>
+  <p class="section-intro">
+    For a household earning under $49,000, the choice between car ownership and transit is an impossible trade-off 
+    between money and time. LOOP introduces a third option that breaks the trap.
+  </p>
+
+  <div class="cost-table-wrap">
+    <table class="cost-table">
+      <thead>
+        <tr>
+          <th>Cost Component</th>
+          <th>Private Vehicle</th>
+          <th>Halifax Transit Pass</th>
+          <th>Affordable Access Pass</th>
+          <th>LOOP (Daily Commute)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Fare / Fuel</td>
+          <td class="cost-dim">$2,624</td>
+          <td>$1,080</td>
+          <td>$540</td>
+          <td class="cost-highlight">$1,820</td>
+        </tr>
+        <tr>
+          <td>Insurance</td>
+          <td class="cost-dim">$1,100</td>
+          <td>—</td>
+          <td>—</td>
+          <td class="cost-highlight">—</td>
+        </tr>
+        <tr>
+          <td>Maintenance</td>
+          <td class="cost-dim">$1,500</td>
+          <td>—</td>
+          <td>—</td>
+          <td class="cost-highlight">—</td>
+        </tr>
+        <tr>
+          <td>Registration & Fees</td>
+          <td class="cost-dim">$47</td>
+          <td>—</td>
+          <td>—</td>
+          <td class="cost-highlight">—</td>
+        </tr>
+        <tr>
+          <td>Avg. Commute Time</td>
+          <td>~25 min</td>
+          <td>~44 min</td>
+          <td>~44 min</td>
+          <td class="cost-highlight">~28 min</td>
+        </tr>
+        <tr>
+          <td><strong>Total Annual Cost</strong></td>
+          <td class="cost-dim"><strong>$5,271+</strong></td>
+          <td><strong>$1,080</strong></td>
+          <td><strong>$540</strong></td>
+          <td class="cost-highlight"><strong>~$1,820</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:0.82rem;color:var(--text-tertiary);margin-top:1rem;font-style:italic">
+    * LOOP annual estimate based on $3.50 × 2 trips/day × 260 working days. Private vehicle costs exclude financing, depreciation, and parking. 
+    Halifax Transit and Affordable Access figures from HRM 2025 published fare schedules.
+  </p>
+
+  <div style="margin-top:3rem;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2.25rem">
+    <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:700;color:var(--text-primary);margin-bottom:1rem">The LOOP Value Proposition</h3>
+    <p style="font-size:0.92rem;color:var(--text-secondary);line-height:1.8">
+      LOOP occupies the strategic middle ground. It costs roughly 65% less than car ownership while delivering near-car commute times (~28 minutes vs. 25 for private vehicles). Compared to transit, it costs more than the subsidized pass but dramatically reduces the 19-minute "time tax" that transit-dependent commuters pay every single trip. For a household earning $49,000, LOOP saves over $3,400/year compared to a car — money that stays in the community for rent, food, and education.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SOCIAL IMPACT -->
+<section class="section" id="impact">
+  <div class="section-label">04 — Social Impact</div>
+  <h2>Return on Community Investment</h2>
+  <p class="section-intro">
+    LOOP's impact is measured not just in revenue, but in the economic, social, and environmental dividends 
+    it generates for the Halifax community.
+  </p>
+  <div class="impact-grid">
+    <div class="impact-card">
+      <div class="tag economic">Economic Empowerment</div>
+      <h3>Breaking the Affordability Trap</h3>
+      <p>Reliable rides enable on-time arrivals, protecting wages and opening access to jobs in Burnside, Bayers Lake, and the downtown core. Drivers earn a cost-offset of ~$150/month by sharing empty seats on commutes they already make.</p>
+    </div>
+    <div class="impact-card">
+      <div class="tag social">Social Connection</div>
+      <h3>Antidote to Urban Isolation</h3>
+      <p>Shared rides build social capital — daily conversations between neighbours replace the anonymity of solo commuting. Profiles, ratings, and community bios foster trust and connection, directly addressing what Statistics Canada identifies as rising loneliness across Canadian cities.</p>
+    </div>
+    <div class="impact-card">
+      <div class="tag environmental">Environmental Sustainability</div>
+      <h3>Fewer Cars, Cleaner Air</h3>
+      <p>Every filled seat is potentially one less car on the road. At scale, LOOP directly contributes to HalifACT 2050's climate targets by reducing single-occupancy vehicle trips, lowering carbon emissions, and easing the congestion that already costs Halifax commuters 30% in extra travel time.</p>
+    </div>
+    <div class="impact-card">
+      <div class="tag equity">Access to Opportunity</div>
+      <h3>First-Mile/Last-Mile Solution</h3>
+      <p>LOOP bridges transit deserts — connecting residents in Spryfield, Dartmouth North, and Preston to high-frequency transit corridors and employment hubs. It transforms postal codes from barriers into starting points, ensuring opportunity isn't limited by geography.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- APP SHOWCASE -->
+<section class="section" id="app">
+  <div class="section-label">05 — The App</div>
+  <h2>LOOP MVP — Hackathon Prototype</h2>
+  <p class="section-intro">
+    A fully functional React prototype demonstrating the complete rider journey — from login to trip completion. 
+    Built with a state-machine navigation pattern and embedded CSS for zero-dependency reliability.
+  </p>
+  <div class="showcase-scroll">
+    <div class="screen-card">
+      <img src="1779467130511_image.png" alt="LOOP Logo">
+      <div class="caption"><strong>Brand Identity</strong> — Infinity-loop wordmark symbolizing continuous community connection</div>
+    </div>
+    <div class="screen-card">
+      <img src="1779467158406_image.png" alt="Login Screen">
+      <div class="caption"><strong>Login</strong> — Clean, focused onboarding with demo profile</div>
+    </div>
+    <div class="screen-card">
+      <img src="1779467184474_image.png" alt="Home Screen">
+      <div class="caption"><strong>Home Screen</strong> — Destination picker, wallet balance, map, and arrival time in one view</div>
+    </div>
+    <div class="screen-card">
+      <img src="1779467203542_image.png" alt="Set Arrival Time">
+      <div class="caption"><strong>Time Picker</strong> — Pre-schedule commutes by desired arrival time</div>
+    </div>
+    <div class="screen-card">
+      <img src="1779467222859_image.png" alt="Match Found - Driver">
+      <div class="caption"><strong>Match Found</strong> — Driver profile, vehicle info, ETA, and co-passengers visible</div>
+    </div>
+    <div class="screen-card">
+      <img src="1779467243287_image.png" alt="Passenger Profile">
+      <div class="caption"><strong>Passenger Profile</strong> — Tap to view co-rider ratings and bios for transparency</div>
+    </div>
+    <div class="screen-card">
+      <img src="1779467262121_image.png" alt="Ride in Progress">
+      <div class="caption"><strong>Ride Active</strong> — Safety passphrase, live map, and trip status</div>
+    </div>
+    <div class="screen-card">
+      <img src="1779467282778_image.png" alt="Trip Complete">
+      <div class="caption"><strong>Trip Complete</strong> — Transparent receipt with cost deduction and updated balance</div>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem">
+    <h3 style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:1rem">Safety by Design</h3>
+    <div class="problem-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+      <div class="problem-card" style="padding:1.5rem">
+        <h3 style="font-size:1rem">🔐 Safety Passphrase</h3>
+        <p>Unique randomized code (e.g., "OCEAN-SKY-7") generated per trip for identity verification at pickup.</p>
+      </div>
+      <div class="problem-card" style="padding:1.5rem">
+        <h3 style="font-size:1rem">👥 Co-Passenger Visibility</h3>
+        <p>See who else is in the car before accepting — profiles, ratings, and bios build trust before the ride.</p>
+      </div>
+      <div class="problem-card" style="padding:1.5rem">
+        <h3 style="font-size:1rem">✅ Driver Verification</h3>
+        <p>License, registration, insurance, and background checks required. Verified badge displayed on profiles.</p>
+      </div>
+      <div class="problem-card" style="padding:1.5rem">
+        <h3 style="font-size:1rem">♀️ Women-Only Filter</h3>
+        <p>Option to filter for women drivers and passengers, creating safer ride environments for vulnerable users.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROADMAP -->
+<section class="section" id="roadmap">
+  <div class="section-label">06 — Roadmap & Technology</div>
+  <h2>From Prototype to Platform</h2>
+  <p class="section-intro">
+    The hackathon MVP proves the concept. The production roadmap scales it into a self-sustaining mobility ecosystem 
+    integrated with Halifax's existing transit infrastructure.
+  </p>
+  <div class="roadmap-track">
+    <div class="roadmap-item">
+      <div class="phase-tag">Phase 1 — MVP (Completed)</div>
+      <h3>Hackathon Proof of Concept</h3>
+      <p>Full rider journey in React with state-machine navigation, embedded CSS, simulated matching, wallet system, safety passphrase, and co-passenger profiles. Demonstrated at RBC Hackathon 2025.</p>
+    </div>
+    <div class="roadmap-item">
+      <div class="phase-tag">Phase 2 — Backend & Matching</div>
+      <h3>Intelligent Ride Matching Engine</h3>
+      <p>PostgreSQL or Firestore backend for user profiles, ride history, and transactions. Build the matching algorithm: geographic proximity, time-window overlap, capacity, and user safety preferences. Integrate Stripe for wallet top-ups and automated driver payouts.</p>
+    </div>
+    <div class="roadmap-item">
+      <div class="phase-tag">Phase 3 — Real-Time Integration</div>
+      <h3>Live Maps & GTFS-RT</h3>
+      <p>Replace placeholder maps with Mapbox/Google Maps for live GPS tracking. Integrate Halifax Transit's GTFS-RT feeds for real-time bus positions and service alerts — enabling LOOP to serve as a true first-mile/last-mile complement to public transit.</p>
+    </div>
+    <div class="roadmap-item">
+      <div class="phase-tag">Phase 4 — Growth & Partnerships</div>
+      <h3>Employer Programs & Municipal Contracts</h3>
+      <p>Launch subsidized employer commute programs in Burnside and downtown BIDs. Pilot first-mile/last-mile subsidy contracts with HRM for transit desert zones. Develop native iOS and Android apps. Build anonymized trip-data feedback loop for municipal transit planning.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:3rem">
+    <h3 style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:0.5rem">Technology Stack</h3>
+    <div class="tech-grid">
+      <div class="tech-pill">React</div>
+      <div class="tech-pill">JavaScript (ES6+)</div>
+      <div class="tech-pill">CSS-in-JS</div>
+      <div class="tech-pill">State Machine Pattern</div>
+      <div class="tech-pill">GTFS-RT API</div>
+      <div class="tech-pill">Google Maps Routes API</div>
+      <div class="tech-pill">Protocol Buffers</div>
+      <div class="tech-pill">Stripe (Planned)</div>
+      <div class="tech-pill">PostgreSQL (Planned)</div>
+      <div class="tech-pill">WebSockets (Planned)</div>
+      <div class="tech-pill">Mapbox (Planned)</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- REFERENCES -->
+<section class="section" id="references">
+  <div class="section-label">07 — References</div>
+  <h2>Data Sources & Citations</h2>
+  <ul class="ref-list">
+    <li>Halifax Partnership. (2023). <em>Halifax Index 2023 – Affordability.</em> <a href="https://halifaxpartnership.com/research-strategy/halifax-index-2023/affordability/" target="_blank">halifaxpartnership.com</a></li>
+    <li>Halifax Transit. (2018). <em>Moving Forward Together Plan.</em> <a href="https://cdn.halifax.ca/sites/default/files/documents/transportation/halifax-transit/MFTP_PlanOnly.pdf" target="_blank">cdn.halifax.ca</a></li>
+    <li>Statistics Canada. (2021). <em>Census Profile – Commuting.</em> <a href="https://www12.statcan.gc.ca/census-recensement/2021/rt-td/commuting-navettage-eng.cfm" target="_blank">statcan.gc.ca</a></li>
+    <li>Halifax Regional Municipality. (2020). <em>HalifACT 2050: Acting on Climate Together – Technical Report.</em> <a href="https://www.halifax.ca/sites/default/files/documents/about-the-city/energy-environment/Technical%20Report.pdf" target="_blank">halifax.ca</a></li>
+    <li>Statistics Canada. (2023). <em>Loneliness and Social Isolation.</em> <a href="https://www150.statcan.gc.ca/n1/daily-quotidien/211124/dq211124e-eng.htm" target="_blank">statcan.gc.ca</a></li>
+    <li>Government of Canada, National Seniors Council. (2024). <em>Dialogue – Preventing Social Isolation and Loneliness.</em> <a href="https://www.canada.ca/en/national-seniors-council/programs/publications-reports/dialogue-social.html" target="_blank">canada.ca</a></li>
+    <li>TomTom. (2024). <em>Halifax Traffic Index.</em> <a href="https://www.tomtom.com/traffic-index/halifax-traffic/" target="_blank">tomtom.com</a></li>
+    <li>Halifax Transit. (2025). <em>Service Adjustments.</em> <a href="https://www.halifax.ca/transportation/halifax-transit/service-adjustments" target="_blank">halifax.ca</a></li>
+    <li>Halifax Transit. (2025). <em>Affordable Access Transit Pass Program.</em> <a href="https://www.halifax.ca/about-halifax/affordable-access-program/affordable-access-transit-pass-program" target="_blank">halifax.ca</a></li>
+    <li>LOOP Project Team. (2025). <em>LOOP Reference Estimates.</em> Internal modeling and projections.</li>
+  </ul>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">Loop</div>
+  <p>Your community commute, connected.</p>
+  <div class="credits">
+    Built by Alex Barr · Jenille Cheney · Gregory Drew · Curtis Ferguson · Anne Wambaire Mwangi<br>
+    RBC Hackathon 2025 · NSCC IT Campus, Halifax NS
+  </div>
+</footer>
+
+</body>
+</html>
